@@ -7,7 +7,6 @@
 
 /* This class is responsible for the connection with the graphical framework. */
 class World {
-    int width, height;
     static void (*nullOperation)(double, int, int, Person *);
     /* This maps an input character with a certain function. The mapped function
      * is in the second position of the pair. The first function in the pair is
@@ -20,14 +19,15 @@ class World {
     Person victor;
 public:
     World() {}
-    void init();
+    void init(int width, int height);
     void idle();
     void display();
-    void reshape(int w, int h);
+    void reshape(int width, int height);
     void keyDown(unsigned char key, int x, int y);
     void keyUp(unsigned char key, int x, int y);
     void mouseClick(int button, int state, int x, int y);
     void mouseMotion(int x, int y);
+    int width, height;
 };
 
 #endif

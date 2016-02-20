@@ -2,6 +2,8 @@
 #include "world.h"
 
 static World world;
+static int INITIAL_WIDTH = 1600;
+static int INITIAL_HEIGHT = 900;
 
 void idle() {
     world.idle();
@@ -34,12 +36,12 @@ void mouseMotion(int x, int y) {
 int main(int argc, char* argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowSize(500, 500);
+    glutInitWindowSize(INITIAL_WIDTH, INITIAL_HEIGHT);
     glutInitWindowPosition(100, 100);
     glutCreateWindow(argv[0]);
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glShadeModel(GL_FLAT);
-    world.init();
+    world.init(INITIAL_WIDTH, INITIAL_HEIGHT);
     glutIdleFunc(idle);
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
@@ -47,11 +49,6 @@ int main(int argc, char* argv[]) {
     glutKeyboardUpFunc(keyUp);
     glutMouseFunc(mouseClick);
     glutPassiveMotionFunc(mouseMotion);
-    /*void glutMouseFunc(void (*func)(int button, int state,
-                                int x, int y));*/
-    /*void glutPassiveMotionFunc(void (*func)(int x, int y));*/
-    /*void glutSetCursor(GLUT_CURSOR_NONE);*/
-    /* glutWarpPointer(middleX, middleY);*/
     glutMainLoop();
     return 0;
 }

@@ -26,7 +26,7 @@ static void movePerson(Person *person, int width, int height) {
     glViewport(0, 0, (GLsizei) width, (GLsizei) height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(60.0, (GLdouble) width/(GLdouble) height, 0.9, 20.1);
+    gluPerspective(60.0, (GLdouble) width/(GLdouble) height, 0.9, 200.1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(person->x, person->y, person->z,
@@ -93,7 +93,9 @@ void World::keyDown(unsigned char key, int x, int y) {
 void (*World::nullOperation)(double, int, int, Person *) =
         [] (double t, int w, int h, Person *p) {};
 
-void World::init() {
+void World::init(int width, int height) {
+    this->width = width;
+    this->height = height;
     controls['w'] = std::make_pair(nullOperation,
             [] (double passed_time, int width, int height, Person *person)
             {person->moveForward(0.1); movePerson(person, width, height);});
@@ -138,7 +140,7 @@ void World::mouseClick(int button, int state, int x, int y) {
         trackMouse = !trackMouse;
         if (trackMouse) {
             glutSetCursor(GLUT_CURSOR_NONE);
-            glutWarpPointer(250, 250);
+            glutWarpPointer(width/2, height/2);
         } else {
             glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
         }
@@ -146,12 +148,12 @@ void World::mouseClick(int button, int state, int x, int y) {
 }
 
 void World::mouseMotion(int x, int y) {
-    double xyDeg = (250.0 - y) / 11.0;
-    double zxDeg = (250.0 - x) / 11.0;
-    if (trackMouse && (xyDeg != 0 || zxDeg != 0)) {
+    double zxDeg = (width/2 - x) / 11.0;
+    double xyDeg = (height/2 - y) / 11.0;
+    if (trackMouse && (zxDeg != 0 || xyDeg != 0 )) {
         victor.rotateHorizontal(zxDeg);
         victor.rotateVertical(xyDeg);
-        glutWarpPointer(250, 250);
+        glutWarpPointer(width/2, height/2);
         movePerson(&victor, width, height);
         glutPostRedisplay();
     }
