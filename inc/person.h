@@ -6,10 +6,13 @@
 /* A person at a position facing a direction. */
 class Person {
 public:
-    Person(double x     = 0.0, double y    = 1.0 , double z     = 0.0,
-           double alpha = 0.0, double beta = 90.0, double gamma = 0.0) :
-    x(x), y(y), z(z), alpha(alpha), beta(beta), gamma(gamma) {}
-    double x, y, z, alpha, beta, gamma;
+    double x, y, z, xd, yd, zd;
+    Person(double x         = 0.0, double y         =   0.0, double z = 5.0,
+           double xyDegrees = 0.0, double zxDegrees = 0.0);
+    void moveForward(double);
+    void strafeRight(double);
+    void rotateVertical(double);
+    void rotateHorizontal(double);
 };
 
 std::ostream& operator<<(std::ostream& os, const Person& p);

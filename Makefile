@@ -1,8 +1,8 @@
 CC=g++-4.9
 CXX=g++-4.9
 
-CXX_FLAGS=-std=c++14 -Wall
-LD_FLAGS= -lglut -lGL -lGLU
+CXX_FLAGS=-std=c++14 -Wall -g
+LD_FLAGS= -lglut -lGL -lGLU -g
 
 INC_PATH=inc
 SRC_PATH=src
@@ -10,14 +10,16 @@ OBJ_PATH=obj
 LIB_PATH=lib
 BIN_PATH=bin
 
-OBJ=$(OBJ_PATH)/main.o $(OBJ_PATH)/room.o $(OBJ_PATH)/person.o
+OBJ=$(OBJ_PATH)/main.o $(OBJ_PATH)/world.o $(OBJ_PATH)/person.o
 
 $(BIN_PATH)/room : $(OBJ)
 	$(CXX) -o $(BIN_PATH)/room $(OBJ) $(LD_FLAGS)
 
-$(OBJ_PATH)/main.o : $(SRC_PATH)/main.cpp $(INC_PATH)/room.h $(INC_PATH)/person.h
+$(OBJ_PATH)/main.o : $(SRC_PATH)/main.cpp $(INC_PATH)/world.h
 	$(CXX) -c $(CXX_FLAGS) -I$(INC_PATH) $(SRC_PATH)/main.cpp -o $(OBJ_PATH)/main.o
-$(OBJ_PATH)/room.o : $(SRC_PATH)/room.cpp $(INC_PATH)/room.h
+$(OBJ_PATH)/world.o : $(SRC_PATH)/world.cpp $(INC_PATH)/world.h $(INC_PATH)/person.h
+	$(CXX) -c $(CXX_FLAGS) -I$(INC_PATH) $(SRC_PATH)/world.cpp -o $(OBJ_PATH)/world.o
+$(OBJ_PATH)/room.o : $(SRC_PATH)/room.cpp $(INC_PATH)/room.h 
 	$(CXX) -c $(CXX_FLAGS) -I$(INC_PATH) $(SRC_PATH)/room.cpp -o $(OBJ_PATH)/room.o
 $(OBJ_PATH)/person.o : $(SRC_PATH)/person.cpp $(INC_PATH)/person.h
 	$(CXX) -c $(CXX_FLAGS) -I$(INC_PATH) $(SRC_PATH)/person.cpp -o $(OBJ_PATH)/person.o
