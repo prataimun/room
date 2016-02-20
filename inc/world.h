@@ -7,12 +7,14 @@
 
 /* This class is responsible for the connection with the graphical framework. */
 class World {
-    static void (*nullOperation)(double, Person *);
+    int width, height;
+    static void (*nullOperation)(double, int, int, Person *);
     /* This maps an input character with a certain function. The mapped function
      * is in the second position of the pair. The first function in the pair is
      * either the nullOperation or the mapped function depending on if the key
      * is pressed or not.*/
-    std::map<char, std::pair<void (*)(double, Person *), void (*)(double, Person *)>> controls;
+    std::map<char, std::pair<void (*)(double, int, int, Person *),
+             void (*)(double, int, int, Person *)>> controls;
     clock_t lastClock;
     bool trackMouse;
     Person victor;

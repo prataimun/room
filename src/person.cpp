@@ -13,6 +13,8 @@ Person::Person(double x        , double y        , double z,
     xd = 0.0;
     yd = 0.0;
     zd = -1.0;
+    xdpOld = 0.0;
+    zdpOld = -1.0;
     rotateVertical(xyDegrees);
     rotateHorizontal(zxDegrees);
 }
@@ -27,6 +29,10 @@ void Person::strafeRight(double distance) {
     // TODO orthonormalize the movement
     x -= distance * zd;
     z += distance * xd;
+}
+
+void Person::ascend(double distance) {
+    y += distance;
 }
 
 void Person::rotateVertical(double degrees) {
@@ -46,11 +52,14 @@ void Person::rotateVertical(double degrees) {
         xdp = 0.0;
         zdp = zd < 0.0 ? -1.0 : 1.0;
     } else {
-        // pick any vector
-        // TODO: pick the previous direction instead
-        zdp = -1.0;
-        xdp = 0.0;
+        // pick the previous orthonormilization since there isn't a current one.
+        xdp = xdpOld;
+        zdp = zdpOld;
     }
+    xdpOld = xdp;
+    zdpOld = zdp;
+
+    // std::cout << "xpdOld: " << xdpOld << ", zpdOld: " << zdpOld << std::endl;
 
     // Find a perpendicular vector
     double ux = -zdp;
@@ -80,6 +89,15 @@ void Person::rotateVertical(double degrees) {
     xd = R[0][0] * xdOld + R[0][1] * ydOld + R[0][2] * zdOld;
     yd = R[1][0] * xdOld + R[1][1] * ydOld + R[1][2] * zdOld;
     zd = R[2][0] * xdOld + R[2][1] * ydOld + R[2][2] * zdOld;
+
+    // TODO when rotating past the y axis we should be facing in the y axis directly
+    // don't rotate past the y axis
+    if ((xd > 0 && xdOld < 0) || (xd < 0 && xdOld > 0) ||
+        (zd > 0 && zdOld < 0) || (zd < 0 && zdOld > 0)) {
+        xd = -xd;
+        zd = -zd;
+    }
+    // std::cout << "xd: " << xd << ", yd: " << yd << ", zd: " << zd << std::endl;
 }
 
 void Person::rotateHorizontal(double degrees) {

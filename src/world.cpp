@@ -22,14 +22,25 @@ void World::display(void) {
     glutSwapBuffers();
 }
 
-void World::reshape(int w, int h) {
-    glViewport(0, 0, (GLsizei) w, (GLsizei) h);
+static void movePerson(Person *person, int width, int height) {
+    glViewport(0, 0, (GLsizei) width, (GLsizei) height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(60.0, (GLdouble) w/(GLdouble) h, 1.0, 20.0);
+    gluPerspective(60.0, (GLdouble) width/(GLdouble) height, 0.9, 20.1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(victor.x, 0.0, victor.z, victor.x, 0.0, 0.0, 0.0, 1.0, 0.0);
+    gluLookAt(person->x, person->y, person->z,
+              person->x + person->xd,
+              person->y + person->yd,
+              person->z + person->zd,
+               0.0, 1.0, 0.0);
+    glutPostRedisplay();
+}
+
+void World::reshape(int width, int height) {
+    this->width = width;
+    this->height = height;
+    movePerson(&victor, width, height);
 }
 
 void World::keyDown(unsigned char key, int x, int y) {
@@ -79,28 +90,28 @@ void World::keyDown(unsigned char key, int x, int y) {
     }
 }
 
-void (*World::nullOperation)(double, Person *) = [] (double t, Person *p) {};
-
-static void movePerson(Person *person) {
-    glViewport(0, 0, 500, 500);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(60.0, 1.0, 0.9, 20.1);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    gluLookAt(person->x, person->y, person->z, person->x + person->xd, person->y + person->yd, person->z + person->zd, 0.0, 1.0, 0.0);
-    glutPostRedisplay();
-}
+void (*World::nullOperation)(double, int, int, Person *) =
+        [] (double t, int w, int h, Person *p) {};
 
 void World::init() {
     controls['w'] = std::make_pair(nullOperation,
-            [] (double passed_time, Person *person) {person->moveForward(0.1); movePerson(person);});
+            [] (double passed_time, int width, int height, Person *person)
+            {person->moveForward(0.1); movePerson(person, width, height);});
     controls['a'] = std::make_pair(nullOperation,
-            [] (double passed_time, Person *person) {person->strafeRight(-0.1); movePerson(person);});
+            [] (double passed_time, int width, int height, Person *person)
+            {person->strafeRight(-0.1); movePerson(person, width, height);});
     controls['s'] = std::make_pair(nullOperation,
-            [] (double passed_time, Person *person) {person->moveForward(-0.1); movePerson(person);});
+            [] (double passed_time, int width, int height, Person *person)
+            {person->moveForward(-0.1); movePerson(person, width, height);});
     controls['d'] = std::make_pair(nullOperation,
-            [] (double passed_time, Person *person) {person->strafeRight(0.1); movePerson(person);});
+            [] (double passed_time, int width, int height, Person *person)
+            {person->strafeRight(0.1); movePerson(person, width, height);});
+    controls['q'] = std::make_pair(nullOperation,
+            [] (double passed_time, int width, int height, Person *person)
+            {person->ascend(0.1); movePerson(person, width, height);});
+    controls['e'] = std::make_pair(nullOperation,
+            [] (double passed_time, int width, int height, Person *person)
+            {person->ascend(-0.1); movePerson(person, width, height);});
     trackMouse = false;
     lastClock = clock();
 }
@@ -112,7 +123,7 @@ void World::idle() {
     /* calls each keys corresponding function, if the key is not pressed the
      * function will not do anything */
     for (auto it = controls.begin(); it != controls.end(); it++) {
-        it->second.first(passedTime, &victor);
+        it->second.first(passedTime, width, height, &victor);
     }
 }
 
@@ -135,13 +146,13 @@ void World::mouseClick(int button, int state, int x, int y) {
 }
 
 void World::mouseMotion(int x, int y) {
-    double xyDeg = (250.0 - y) / 10.0;
-    double zxDeg = (250.0 - x) / 10.0;
+    double xyDeg = (250.0 - y) / 11.0;
+    double zxDeg = (250.0 - x) / 11.0;
     if (trackMouse && (xyDeg != 0 || zxDeg != 0)) {
         victor.rotateHorizontal(zxDeg);
         victor.rotateVertical(xyDeg);
         glutWarpPointer(250, 250);
-        movePerson(&victor);
+        movePerson(&victor, width, height);
         glutPostRedisplay();
     }
 }
